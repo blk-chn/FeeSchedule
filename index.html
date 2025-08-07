@@ -40,15 +40,25 @@
       80: 484,
       90: 605,
       100: 757,
+      110: 947,
+      120: 1184,
+      130: 1480,
+      140: 1850,
+      150: 2313,
+      160: 2892,
+      170: 3615,
+      180: 4519,
+      190: 5649
     };
 
-    const flatRareOver200 = 7062;
+const flatRateOver200 = 7062;
 
-    function roundUpTo10 (n) {
+    // 切り上げてfeeTableにある数に変換
+    function roundUpTo10(n) {
       return Math.ceil(n / 10) * 10;
     }
 
-    function gerFee(unitCount) {
+    function getFee(unitCount) {
       if (unitCount >= 200) return flatRateOver200;
       const rounded = roundUpTo10(unitCount);
       return feeTable[rounded] ?? null;
@@ -57,29 +67,40 @@
     function calculate() {
       const target = parseInt(document.getElementById("quantityInput").value);
       const units = Object.keys(feeTable).map(Number);
-      const dp = Array(target + 1).fill(Infinity);
-      const combo = Array(target + 1).fill(null);
-    
-      dp[0] = 0;
-      combo[0] = [];
-    
-      for (let i = 1; i <= target; i++) {
-        for (let unit of units) {
-          if (i - unit >= 0 && dp[i - unit] + feeTable[unit] < dp[i]) {
-            dp[i] = dp[i - unit] + feeTable[unit];
-            combo[i] = [...combo[i - unit], unit];
+      let bestCombo = null;
+      let minFee = Infinity;
+
+      function search(currentCombo, currentSum, currentFee) {
+        if (currentSum >= target && currentSum < 200) {
+          if (currentFee < minFee) {
+            minFee = currentFee;
+            bestCombo = [...currentCombo];
           }
+          return;
+        }
+        if (currentSum >= 200) return;
+
+        for (let unit of units) {
+          search([...currentCombo, unit], currentSum + unit, currentFee + getFee(unit));
         }
       }
-    
+
+      if (target >= 200) {
+        document.getElementById("result").innerHTML =
+          <strong>200個以上：</strong> 一律 ${flatRateOver200}円;
+        return;
+      }
+
+      search([], 0, 0);
+
       const resultDiv = document.getElementById("result");
-      if (combo[target]) {
-        resultDiv.innerHTML = `
-          <strong>最安の組み合わせ：</strong> ${combo[target].map(q => `${q}個`).join(" + ")}<br>
-          <strong>合計手数料：</strong> ${dp[target]}ゼニー
-        `;
+      if (bestCombo) {
+        resultDiv.innerHTML = 
+          <strong>最安の組み合わせ：</strong> ${bestCombo.join("個 + ")}個<br>
+          <strong>合計手数料：</strong> ${minFee}円
+        ;
       } else {
-        resultDiv.innerHTML = "その個数では有効な組み合わせが見つかりませんでした。";
+        resultDiv.innerHTML = "有効な組み合わせが見つかりませんでした。";
       }
     }
   </script>
