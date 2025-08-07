@@ -42,39 +42,34 @@
       100: 757,
     };
 
-    function calculate() {
-      const target = parseInt(document.getElementById("quantityInput").value);
-      const units = Object.keys(feeTable).map(Number);
-      let bestCombo = null;
-      let minFee = Infinity;
-
-      function search(currentCombo, currentSum, currentFee) {
-        if (currentSum > target) return;
-        if (currentSum === target) {
-          if (currentFee < minFee) {
-            minFee = currentFee;
-            bestCombo = [...currentCombo];
-          }
-          return;
+  function calculate() {
+    const target = parseInt(document.getElementById("quantityInput").value);
+    const units = Object.keys(feeTable).map(Number);
+    const dp = Array(target + 1).fill(Infinity);
+    const combo = Array(target + 1).fill(null);
+  
+    dp[0] = 0;
+    combo[0] = [];
+  
+    for (let i = 1; i <= target; i++) {
+      for (let unit of units) {
+        if (i - unit >= 0 && dp[i - unit] + feeTable[unit] < dp[i]) {
+          dp[i] = dp[i - unit] + feeTable[unit];
+          combo[i] = [...combo[i - unit], unit];
         }
-
-        for (let unit of units) {
-          search([...currentCombo, unit], currentSum + unit, currentFee + feeTable[unit]);
-        }
-      }
-
-      search([], 0, 0);
-
-      const resultDiv = document.getElementById("result");
-      if (bestCombo) {
-        resultDiv.innerHTML = `
-          <strong>最安の組み合わせ：</strong> ${bestCombo.join("個 + ")}個<br>
-          <strong>合計手数料：</strong> ${minFee}円
-        `;
-      } else {
-        resultDiv.innerHTML = "その個数では有効な組み合わせが見つかりませんでした。";
       }
     }
+  
+    const resultDiv = document.getElementById("result");
+    if (combo[target]) {
+      resultDiv.innerHTML = `
+        <strong>最安の組み合わせ：</strong> ${combo[target].map(q => `${q}個`).join(" + ")}<br>
+        <strong>合計手数料：</strong> ${dp[target]}円
+      `;
+    } else {
+      resultDiv.innerHTML = "その個数では有効な組み合わせが見つかりませんでした。";
+    }
+  }
   </script>
 </body>
 </html>
