@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>手数料シミュレーター</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 30px;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 1em;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h1>手数料シミュレーター</h1>
+  <p>引き出したい個数を入力してください：</p>
+  <input type="number" id="quantityInput" min="1" max="199" value="100">
+  <button onclick="calculate()">計算する</button>
+
+  <div id="result"></div>
+
+  <script>
+    const feeTable = {
+      10: 100,
+      20: 125,
+      30: 157,
+      40: 197,
+      50: 247,
+      60: 309,
+      70: 387,
+      80: 484,
+      90: 605,
+      100: 757,
+      110: 947,
+      120: 1184,
+      130: 1480,
+      140: 1850,
+      150: 2313,
+      160: 2892,
+      170: 3615,
+      180: 4519,
+      190: 5649,
+      200: 7062
+    };
+
+    function calculate() {
+      const target = parseInt(document.getElementById("quantityInput").value);
+      const units = Object.keys(feeTable).map(Number);
+      let bestCombo = null;
+      let minFee = Infinity;
+
+      function search(currentCombo, currentSum, currentFee) {
+        if (currentSum > target) return;
+        if (currentSum === target) {
+          if (currentFee < minFee) {
+            minFee = currentFee;
+            bestCombo = [...currentCombo];
+          }
+          return;
+        }
+
+        for (let unit of units) {
+          search([...currentCombo, unit], currentSum + unit, currentFee + feeTable[unit]);
+        }
+      }
+
+      search([], 0, 0);
+
+      const resultDiv = document.getElementById("result");
+      if (bestCombo) {
+        resultDiv.innerHTML = `
+          <strong>最安の組み合わせ：</strong> ${bestCombo.join("個 + ")}個<br>
+          <strong>合計手数料：</strong> ${minFee}円
+        `;
+      } else {
+        resultDiv.innerHTML = "その個数では有効な組み合わせが見つかりませんでした。";
+      }
+    }
+  </script>
+</body>
+</html>
