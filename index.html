@@ -73,7 +73,7 @@
       if (combo[target]) {
         resultDiv.innerHTML = `
           <strong>最安の組み合わせ：</strong> ${combo[target].map(q => `${q}個`).join(" + ")}<br>
-          <strong>合計手数料：</strong> ${dp[target]}円
+          <strong>合計手数料：</strong> ${dp[target]}ゼニー
         `;
       } else {
         resultDiv.innerHTML = "その個数では有効な組み合わせが見つかりませんでした。";
