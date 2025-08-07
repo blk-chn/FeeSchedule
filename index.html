@@ -23,7 +23,7 @@
 <body>
   <h1>手数料シミュレーター</h1>
   <p>引き出したい個数を入力してください：</p>
-  <input type="number" id="quantityInput" min="1" max="999" value="101">
+  <input type="number" id="quantityInput" min="1" max="999" value="0">
   <button onclick="calculate()">計算する</button>
 
   <div id="result"></div>
@@ -42,8 +42,17 @@
       100: 757,
     };
 
+    const flatRareOver200 = 7062;
+
     function roundUpTo10 (n) {
       return Math.ceil(n / 10) * 10;
+    }
+
+    function gerFee(unitCount) {
+      if (unitCount >= 200) return flatRateOver200;
+      const rounded = roundUpTo10(unitCount);
+      return feeTable[rounded] ?? null;
+    }
 
     function calculate() {
       const target = parseInt(document.getElementById("quantityInput").value);
