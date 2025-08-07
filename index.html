@@ -23,7 +23,7 @@
 <body>
   <h1>手数料シミュレーター</h1>
   <p>引き出したい個数を入力してください：</p>
-  <input type="number" id="quantityInput" min="1" max="999" value="100">
+  <input type="number" id="quantityInput" min="1" max="999" value="101">
   <button onclick="calculate()">計算する</button>
 
   <div id="result"></div>
@@ -42,34 +42,37 @@
       100: 757,
     };
 
-  function calculate() {
-    const target = parseInt(document.getElementById("quantityInput").value);
-    const units = Object.keys(feeTable).map(Number);
-    const dp = Array(target + 1).fill(Infinity);
-    const combo = Array(target + 1).fill(null);
-  
-    dp[0] = 0;
-    combo[0] = [];
-  
-    for (let i = 1; i <= target; i++) {
-      for (let unit of units) {
-        if (i - unit >= 0 && dp[i - unit] + feeTable[unit] < dp[i]) {
-          dp[i] = dp[i - unit] + feeTable[unit];
-          combo[i] = [...combo[i - unit], unit];
+    function roundUpTo10 (n) {
+      return Math.ceil(n / 10) * 10;
+
+    function calculate() {
+      const target = parseInt(document.getElementById("quantityInput").value);
+      const units = Object.keys(feeTable).map(Number);
+      const dp = Array(target + 1).fill(Infinity);
+      const combo = Array(target + 1).fill(null);
+    
+      dp[0] = 0;
+      combo[0] = [];
+    
+      for (let i = 1; i <= target; i++) {
+        for (let unit of units) {
+          if (i - unit >= 0 && dp[i - unit] + feeTable[unit] < dp[i]) {
+            dp[i] = dp[i - unit] + feeTable[unit];
+            combo[i] = [...combo[i - unit], unit];
+          }
         }
       }
+    
+      const resultDiv = document.getElementById("result");
+      if (combo[target]) {
+        resultDiv.innerHTML = `
+          <strong>最安の組み合わせ：</strong> ${combo[target].map(q => `${q}個`).join(" + ")}<br>
+          <strong>合計手数料：</strong> ${dp[target]}ゼニー
+        `;
+      } else {
+        resultDiv.innerHTML = "その個数では有効な組み合わせが見つかりませんでした。";
+      }
     }
-  
-    const resultDiv = document.getElementById("result");
-    if (combo[target]) {
-      resultDiv.innerHTML = `
-        <strong>最安の組み合わせ：</strong> ${combo[target].map(q => `${q}個`).join(" + ")}<br>
-        <strong>合計手数料：</strong> ${dp[target]}円
-      `;
-    } else {
-      resultDiv.innerHTML = "その個数では有効な組み合わせが見つかりませんでした。";
-    }
-  }
   </script>
 </body>
 </html>
