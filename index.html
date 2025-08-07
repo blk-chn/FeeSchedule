@@ -23,7 +23,7 @@
 <body>
   <h1>手数料シミュレーター</h1>
   <p>引き出したい個数を入力してください：</p>
-  <input type="number" id="quantityInput" min="1" max="199" value="100">
+  <input type="number" id="quantityInput" min="1" max="999" value="100">
   <button onclick="calculate()">計算する</button>
 
   <div id="result"></div>
@@ -40,16 +40,6 @@
       80: 484,
       90: 605,
       100: 757,
-      110: 947,
-      120: 1184,
-      130: 1480,
-      140: 1850,
-      150: 2313,
-      160: 2892,
-      170: 3615,
-      180: 4519,
-      190: 5649,
-      200: 7062
     };
 
     function calculate() {
