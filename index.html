@@ -5,28 +5,58 @@
   <title>手数料シミュレーター</title>
   <style>
     body {
-      font-family: sans-serif;
-      margin: 30px;
+      font-family: 'Helvetica Neue', sans-serif;
+      margin: 20px;
+      padding: 0;
+      background: #f0f4f8;
+      color: #333;
     }
+    
     input, button {
-      padding: 10px;
+      padding: 12px;
       font-size: 1em;
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 10px;
     }
+    
+    button {
+      background-color: #0078D4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    button:hover {
+      background-color: #005ea2;
+    }
+    
     #result {
       margin-top: 20px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      background: #ffffff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: all 0.3s ease-in-out;
+    }
+    
+    @media (min-width: 600px) {
+      input, button {
+        width: 300px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>手数料シミュレーター</h1>
+  <h1>💰 手数料シミュレーター</h1>
   <p>引き出したい個数を入力してください</p>
   <p>端数は10の倍数にしてください(102→110)</p>
-  <input type="number" id="quantityInput" min="1" max="999">
-  <button onclick="calculate()">計算する</button>
-
+    <div style="max-width: 400px; margin: auto;">
+    <input type="number" id="quantityInput" min="10" max="999" step="10" placeholder="例：120">
+    <button onclick="calculate()">計算する</button>
+    <div id="result"></div>
+  </div>
   <div id="result"></div>
 
   <script>
